@@ -1,14 +1,14 @@
-import { Navbar } from "@/components/navbar"
-import { GameGrid } from "@/components/game-grid"
-import { HeroBanner } from "@/components/hero-banner"
-import { FeaturesSection } from "@/components/features-section"
-import { JackpotSection } from "@/components/jackpot-section"
-import { WinnersTicker } from "@/components/winners-ticker"
-import { SocialProofToast } from "@/components/social-proof-toast"
-import { VipSection } from "@/components/vip-section"
-import { FloatingElements } from "@/components/floating-elements"
-import { LeaderboardSection } from "@/components/leaderboard-section"
-import { QuickActionBar } from "@/components/quick-action-bar"
+import { Navbar } from "@/components/navbar";
+import { GameGrid } from "@/components/game-grid";
+import { HeroBanner } from "@/components/hero-banner";
+import { FeaturesSection } from "@/components/features-section";
+import { JackpotSection } from "@/components/jackpot-section";
+import { WinnersTicker } from "@/components/winners-ticker";
+import { SocialProofToast } from "@/components/social-proof-toast";
+import { VipSection } from "@/components/vip-section";
+import { FloatingElements } from "@/components/floating-elements";
+import { LeaderboardSection } from "@/components/leaderboard-section";
+import { QuickActionBar } from "@/components/quick-action-bar";
 
 export default function Home() {
   const popularGames = [
@@ -108,7 +108,7 @@ export default function Home() {
       description: "Racing game",
       gameUrl: "#",
     },
-  ]
+  ];
 
   const playNowGames = [
     {
@@ -159,7 +159,7 @@ export default function Home() {
       description: "Classic connect 4",
       gameUrl: "#",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background relative pb-16 md:pb-0">
@@ -171,7 +171,12 @@ export default function Home() {
       <HeroBanner />
 
       <main id="games" className="max-w-7xl mx-auto px-6 py-8 relative z-10">
-        <GameGrid title="Popular Games" games={popularGames} icon="star" showSearch />
+        <GameGrid
+          title="Popular Games"
+          games={popularGames}
+          icon="star"
+          showSearch
+        />
       </main>
 
       <FeaturesSection />
@@ -206,5 +211,5 @@ export default function Home() {
       <SocialProofToast />
       <QuickActionBar />
     </div>
-  )
+  );
 }
