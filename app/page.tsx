@@ -5,7 +5,6 @@ import { FeaturesSection } from "@/components/features-section";
 import { JackpotSection } from "@/components/jackpot-section";
 import { WinnersTicker } from "@/components/winners-ticker";
 import { SocialProofToast } from "@/components/social-proof-toast";
-import { VipSection } from "@/components/vip-section";
 import { FloatingElements } from "@/components/floating-elements";
 import { LeaderboardSection } from "@/components/leaderboard-section";
 import { QuickActionBar } from "@/components/quick-action-bar";
@@ -180,8 +179,6 @@ export default function Home() {
       </main>
 
       <FeaturesSection />
-
-      <VipSection />
 
       <LeaderboardSection />
 
