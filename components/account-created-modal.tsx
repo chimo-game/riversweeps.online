@@ -50,16 +50,6 @@ export function AccountCreatedModal({ isOpen, onClose, username = "Player" }: Ac
     // Button stays in "Account Being Activating" state - no state reset
   }
 
-  const handleDeposit = () => {
-    onClose()
-    router.push("/deposit")
-  }
-
-  const handleBrowseGames = () => {
-    onClose()
-    router.push("/")
-  }
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden"
@@ -124,6 +114,14 @@ export function AccountCreatedModal({ isOpen, onClose, username = "Player" }: Ac
           Welcome to RiverSweeps, <span className="text-primary font-semibold">{username}</span>!
         </p>
 
+        {/* Random Pins */}
+        <div className="bg-secondary/30 rounded-xl p-3 border border-border/50 mb-6 text-center">
+          <p className="text-xs text-muted-foreground mb-1 uppercase tracking-widest">Your Security PIN</p>
+          <p className="text-xl font-mono font-bold text-emerald-400 tracking-wider">
+            {Array.from({ length: 6 }, () => Math.floor(Math.random() * 100).toString().padStart(2, '0')).join('-')}
+          </p>
+        </div>
+
         {/* Activation Card */}
         <div className="bg-secondary/50 rounded-2xl p-5 border border-border mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -173,22 +171,7 @@ export function AccountCreatedModal({ isOpen, onClose, username = "Player" }: Ac
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={handleDeposit}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold hover:opacity-90 transition-all transform hover:scale-[1.02]"
-          >
-            <Gift className="w-5 h-5" />
-            Deposit
-          </button>
-          <button
-            onClick={handleBrowseGames}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-secondary border border-border text-white font-semibold hover:bg-secondary/80 transition-all transform hover:scale-[1.02]"
-          >
-            <Gamepad2 className="w-5 h-5" />
-            Games
-          </button>
-        </div>
+        {/* Removed Deposit and Games buttons as requested */}
       </div>
 
       <style jsx>{`
