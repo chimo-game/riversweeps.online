@@ -29,7 +29,6 @@ interface ValidationErrors {
   username?: string
   email?: string
   password?: string
-  confirmPassword?: string
   agreeTerms?: string
 }
 
@@ -37,13 +36,11 @@ interface ValidFields {
   username: boolean
   email: boolean
   password: boolean
-  confirmPassword: boolean
 }
 
 export default function RegisterPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [errors, setErrors] = useState<ValidationErrors>({})
@@ -52,13 +49,11 @@ export default function RegisterPage() {
     username: false,
     email: false,
     password: false,
-    confirmPassword: false,
   })
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
     agreeTerms: false,
   })
 
@@ -98,12 +93,6 @@ export default function RegisterPage() {
     return undefined
   }
 
-  const validateConfirmPassword = (confirmPassword: string, password: string): string | undefined => {
-    if (!confirmPassword) return "Please confirm your password"
-    if (confirmPassword !== password) return "Passwords do not match"
-    return undefined
-  }
-
   const validateFieldLive = (field: string, value: string) => {
     let error: string | undefined
     switch (field) {
@@ -115,14 +104,6 @@ export default function RegisterPage() {
         break
       case "password":
         error = validatePassword(value)
-        if (formData.confirmPassword) {
-          const confirmError = validateConfirmPassword(formData.confirmPassword, value)
-          setErrors((prev) => ({ ...prev, confirmPassword: confirmError }))
-          setValidFields((prev) => ({ ...prev, confirmPassword: !confirmError && formData.confirmPassword.length > 0 }))
-        }
-        break
-      case "confirmPassword":
-        error = validateConfirmPassword(value, formData.password)
         break
     }
 
@@ -146,7 +127,6 @@ export default function RegisterPage() {
       username: validateUsername(formData.username),
       email: validateEmail(formData.email),
       password: validatePassword(formData.password),
-      confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password),
       agreeTerms: !formData.agreeTerms ? "You must agree to the terms" : undefined,
     }
     setErrors(newErrors)
@@ -166,9 +146,6 @@ export default function RegisterPage() {
       case "password":
         newErrors.password = validatePassword(formData.password)
         break
-      case "confirmPassword":
-        newErrors.confirmPassword = validateConfirmPassword(formData.confirmPassword, formData.password)
-        break
     }
     setErrors(newErrors)
   }
@@ -179,7 +156,6 @@ export default function RegisterPage() {
       username: true,
       email: true,
       password: true,
-      confirmPassword: true,
       agreeTerms: true,
     })
 
@@ -426,35 +402,6 @@ export default function RegisterPage() {
                     </button>
                   </div>
                   {touched.password && <InputError message={errors.password} />}
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Confirm Password</label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                      onBlur={() => handleBlur("confirmPassword")}
-                      className={getPasswordInputClass("confirmPassword")}
-                      placeholder="Confirm your password"
-                    />
-                    <div className="absolute right-12 top-1/2 -translate-y-1/2">
-                      {validFields.confirmPassword && (
-                        <CheckCircle2 className="w-5 h-5 text-green-500 animate-in zoom-in duration-200" />
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  {touched.confirmPassword && <InputError message={errors.confirmPassword} />}
                 </div>
 
                 {/* Coupon Code Input */}
