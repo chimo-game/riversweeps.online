@@ -8,12 +8,26 @@ import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { LoadingOverlay } from "@/components/loading-overlay"
 import { AccountCreatedModal } from "@/components/account-created-modal"
-import { User, Mail, Lock, Phone, Eye, EyeOff, Gift, Shield, Zap, AlertCircle, CheckCircle2 } from "lucide-react"
+import {
+  User,
+  Mail,
+  Lock,
+  Phone,
+  Eye,
+  EyeOff,
+  Gift,
+  Shield,
+  Zap,
+  AlertCircle,
+  CheckCircle2,
+  Ticket,
+  Loader2,
+} from "lucide-react"
+import confetti from "canvas-confetti"
 
 interface ValidationErrors {
   username?: string
   email?: string
-  phone?: string
   password?: string
   confirmPassword?: string
   agreeTerms?: string
@@ -22,7 +36,6 @@ interface ValidationErrors {
 interface ValidFields {
   username: boolean
   email: boolean
-  phone: boolean
   password: boolean
   confirmPassword: boolean
 }
@@ -38,18 +51,21 @@ export default function RegisterPage() {
   const [validFields, setValidFields] = useState<ValidFields>({
     username: false,
     email: false,
-    phone: false,
     password: false,
     confirmPassword: false,
   })
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
     agreeTerms: false,
   })
+
+  // Coupon State
+  const [couponCode, setCouponCode] = useState("")
+  const [couponStatus, setCouponStatus] = useState<"idle" | "loading" | "valid" | "invalid">("idle")
+  const [couponMessage, setCouponMessage] = useState("")
 
   const loadingMessages = [
     "Validating information...",
@@ -70,13 +86,6 @@ export default function RegisterPage() {
   const validateEmail = (email: string): string | undefined => {
     if (!email) return "Email is required"
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid email address"
-    return undefined
-  }
-
-  const validatePhone = (phone: string): string | undefined => {
-    if (!phone) return "Phone number is required"
-    const cleanPhone = phone.replace(/[\s\-$$$$]/g, "")
-    if (!/^\+?[0-9]{10,15}$/.test(cleanPhone)) return "Please enter a valid phone number"
     return undefined
   }
 
@@ -103,9 +112,6 @@ export default function RegisterPage() {
         break
       case "email":
         error = validateEmail(value)
-        break
-      case "phone":
-        error = validatePhone(value)
         break
       case "password":
         error = validatePassword(value)
@@ -139,7 +145,6 @@ export default function RegisterPage() {
     const newErrors: ValidationErrors = {
       username: validateUsername(formData.username),
       email: validateEmail(formData.email),
-      phone: validatePhone(formData.phone),
       password: validatePassword(formData.password),
       confirmPassword: validateConfirmPassword(formData.confirmPassword, formData.password),
       agreeTerms: !formData.agreeTerms ? "You must agree to the terms" : undefined,
@@ -158,9 +163,6 @@ export default function RegisterPage() {
       case "email":
         newErrors.email = validateEmail(formData.email)
         break
-      case "phone":
-        newErrors.phone = validatePhone(formData.phone)
-        break
       case "password":
         newErrors.password = validatePassword(formData.password)
         break
@@ -176,7 +178,6 @@ export default function RegisterPage() {
     setTouched({
       username: true,
       email: true,
-      phone: true,
       password: true,
       confirmPassword: true,
       agreeTerms: true,
@@ -184,6 +185,35 @@ export default function RegisterPage() {
 
     if (validateForm()) {
       setIsLoading(true)
+    }
+  }
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return
+
+    setCouponStatus("loading")
+    setCouponMessage("")
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    if (
+      couponCode.toUpperCase() === "WELCOME500" ||
+      couponCode.toUpperCase() === "RIVER2024" ||
+      couponCode.toUpperCase() === "WELCOME20"
+    ) {
+      setCouponStatus("valid")
+      const bonusAmount = couponCode.toUpperCase() === "WELCOME20" ? "$20" : "$500"
+      setCouponMessage(`Coupon applied! ${bonusAmount} bonus added.`)
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#22c55e", "#16a34a", "#ffffff"],
+      })
+    } else {
+      setCouponStatus("invalid")
+      setCouponMessage("Invalid coupon code. Please try again.")
     }
   }
 
@@ -195,7 +225,7 @@ export default function RegisterPage() {
   const InputError = ({ message }: { message?: string }) => {
     if (!message) return null
     return (
-      <div className="flex items-center gap-1 mt-1.5 text-red-400 text-sm">
+      <div className="flex items-center gap-1 mt-1.5 text-red-400 text-sm animate-in slide-in-from-top-1">
         <AlertCircle className="w-4 h-4" />
         <span>{message}</span>
       </div>
@@ -309,6 +339,20 @@ export default function RegisterPage() {
 
           {/* Right Side - Form */}
           <div className="w-full max-w-md mx-auto lg:mx-0">
+            {/* Coupon Banner */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-amber-500/20 to-orange-600/20 border border-orange-500/30 rounded-2xl p-4 mb-6 group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl transform translate-x-8 -translate-y-8" />
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <Ticket className="w-6 h-6 text-white animate-pulse" />
+                </div>
+                <div>
+                  <h3 className="text-orange-100 font-bold text-lg">Use Code: WELCOME20</h3>
+                  <p className="text-orange-200/70 text-sm">Get $20 free bonus on signup!</p>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-card rounded-2xl p-8 border border-border shadow-xl">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center mx-auto mb-4">
@@ -353,24 +397,6 @@ export default function RegisterPage() {
                     <ValidIcon isValid={validFields.email} />
                   </div>
                   {touched.email && <InputError message={errors.email} />}
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2">Phone Number</label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleChange("phone", e.target.value)}
-                      onBlur={() => handleBlur("phone")}
-                      className={getInputClass("phone")}
-                      placeholder="+1 (555) 000-0000"
-                    />
-                    <ValidIcon isValid={validFields.phone} />
-                  </div>
-                  {touched.phone && <InputError message={errors.phone} />}
                 </div>
 
                 {/* Password */}
@@ -431,8 +457,69 @@ export default function RegisterPage() {
                   {touched.confirmPassword && <InputError message={errors.confirmPassword} />}
                 </div>
 
+                {/* Coupon Code Input */}
+                <div className="pt-2">
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Coupon Code <span className="text-muted-foreground font-normal">(Optional)</span>
+                  </label>
+                  <div className="flex gap-3">
+                    <div className="relative flex-1">
+                      <Ticket className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value.toUpperCase())
+                          if (couponStatus !== "idle") {
+                            setCouponStatus("idle")
+                            setCouponMessage("")
+                          }
+                        }}
+                        className={`w-full pl-12 pr-4 py-3 rounded-xl bg-secondary border text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 transition-all ${
+                          couponStatus === "valid"
+                            ? "border-green-500 focus:ring-green-500 text-green-500"
+                            : couponStatus === "invalid"
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-border focus:ring-primary"
+                        }`}
+                        placeholder="WELCOME500"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={!couponCode || couponStatus === "loading" || couponStatus === "valid"}
+                      className={`px-6 rounded-xl font-bold transition-all min-w-[100px] flex items-center justify-center ${
+                        couponStatus === "valid"
+                          ? "bg-green-500/20 text-green-500 border border-green-500/50 cursor-default"
+                          : couponStatus === "loading"
+                            ? "bg-secondary text-white border border-border cursor-not-allowed"
+                            : "bg-secondary hover:bg-white/10 text-white border border-border hover:border-white/30"
+                      }`}
+                    >
+                      {couponStatus === "loading" ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : couponStatus === "valid" ? (
+                        "Applied"
+                      ) : (
+                        "Apply"
+                      )}
+                    </button>
+                  </div>
+                  {couponStatus === "valid" && (
+                    <p className="text-green-400 text-sm mt-2 flex items-center gap-1.5 animate-in slide-in-from-top-1">
+                      <CheckCircle2 className="w-4 h-4" /> {couponMessage}
+                    </p>
+                  )}
+                  {couponStatus === "invalid" && (
+                    <p className="text-red-400 text-sm mt-2 flex items-center gap-1.5 animate-in slide-in-from-top-1">
+                      <AlertCircle className="w-4 h-4" /> {couponMessage}
+                    </p>
+                  )}
+                </div>
+
                 {/* Terms */}
-                <div>
+                <div className="pt-2">
                   <div className="flex items-start gap-3">
                     <input
                       type="checkbox"
