@@ -52,12 +52,22 @@
 /* Pink gradient line under navbar */
 .navbar-gradient {
   height: 3px;
-  background: linear-gradient(90deg, hsl(320 100% 55%) 0%, hsl(280 100% 60%) 50%, hsl(320 100% 55%) 100%);
+  background: linear-gradient(
+    90deg,
+    hsl(320 100% 55%) 0%,
+    hsl(280 100% 60%) 50%,
+    hsl(320 100% 55%) 100%
+  );
 }
 
 /* Pink/magenta shimmer effect */
 .pink-shimmer {
-  background: linear-gradient(90deg, hsl(320 100% 55%) 0%, hsl(340 100% 70%) 50%, hsl(320 100% 55%) 100%);
+  background: linear-gradient(
+    90deg,
+    hsl(320 100% 55%) 0%,
+    hsl(340 100% 70%) 50%,
+    hsl(320 100% 55%) 100%
+  );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -67,7 +77,14 @@
 
 /* Rainbow text for hero */
 .rainbow-text {
-  background: linear-gradient(90deg, #00d4ff 0%, #00ff88 25%, #ffee00 50%, #ff6600 75%, #ff0066 100%);
+  background: linear-gradient(
+    90deg,
+    #00d4ff 0%,
+    #00ff88 25%,
+    #ffee00 50%,
+    #ff6600 75%,
+    #ff0066 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -93,7 +110,11 @@
 
 /* Feature card dotted pattern background */
 .dotted-pattern {
-  background-image: radial-gradient(circle, hsl(230 40% 25%) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    hsl(230 40% 25%) 1px,
+    transparent 1px
+  );
   background-size: 20px 20px;
 }
 
@@ -163,4 +184,33 @@
 
 .animate-float-particle {
   animation: float-particle linear infinite;
+}
+
+/* Heartbeat attention animation */
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.03);
+  }
+  30% {
+    transform: scale(1.008);
+  }
+  48% {
+    transform: scale(1.032);
+  }
+  66% {
+    transform: scale(1.008);
+  }
+  80% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 3.2s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
 }

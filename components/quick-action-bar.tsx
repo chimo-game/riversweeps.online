@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { Home, Gamepad2, Wallet, User } from "lucide-react"
+import { Home, Gamepad2, Wallet, User, Banknote } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 const actions = [
   { icon: Home, label: "Home", href: "/" },
   { icon: Gamepad2, label: "Games", href: "/#games" },
   { icon: Wallet, label: "Deposit", href: "/deposit" },
+  { icon: Banknote, label: "Cash Out", href: "/cashout" },
   { icon: User, label: "Account", href: "/register" },
 ]
 

@@ -8,6 +8,8 @@ import { SocialProofToast } from "@/components/social-proof-toast";
 import { FloatingElements } from "@/components/floating-elements";
 import { LeaderboardSection } from "@/components/leaderboard-section";
 import { QuickActionBar } from "@/components/quick-action-bar";
+import Link from "next/link";
+import { Banknote, Wallet } from "lucide-react";
 
 export default function Home() {
   const popularGames = [
@@ -169,13 +171,40 @@ export default function Home() {
 
       <HeroBanner />
 
+      {/* Deposit & Cash Out quick section */}
+      <section className="max-w-5xl mx-auto px-6 mt-4 mb-4 relative z-10">
+        <div className="grid md:grid-cols-2 gap-4">
+          <Link
+            href="/deposit"
+            className="group flex items-center justify-between md:justify-start gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-primary to-pink-600 text-white font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition hover:scale-[1.01]"
+          >
+            <div className="flex items-center gap-3">
+              <Wallet className="w-6 h-6" />
+              <div className="text-left">
+                <div className="text-sm uppercase opacity-80">Add funds</div>
+                <div className="text-lg font-bold">Deposit</div>
+              </div>
+            </div>
+            <span className="text-sm opacity-80">Start playing</span>
+          </Link>
+          <Link
+            href="/cashout"
+            className="group flex items-center justify-between md:justify-start gap-3 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition hover:scale-[1.01]"
+          >
+            <div className="flex items-center gap-3">
+              <Banknote className="w-6 h-6" />
+              <div className="text-left">
+                <div className="text-sm uppercase opacity-80">Withdraw</div>
+                <div className="text-lg font-bold">Cash Out</div>
+              </div>
+            </div>
+            <span className="text-sm opacity-80">Instant payouts</span>
+          </Link>
+        </div>
+      </section>
+
       <main id="games" className="max-w-7xl mx-auto px-6 py-8 relative z-10">
-        <GameGrid
-          title="Popular Games"
-          games={popularGames}
-          icon="star"
-          showSearch
-        />
+        <GameGrid title="Popular Games" games={popularGames} icon="star" />
       </main>
 
       <FeaturesSection />

@@ -12,7 +12,6 @@ import {
   User,
   Mail,
   Lock,
-  Phone,
   Eye,
   EyeOff,
   Gift,
