@@ -132,6 +132,8 @@ export default function DepositPage() {
   const router = useRouter();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
   const [customAmount, setCustomAmount] = useState("");
+  const [username, setUsername] = useState("");
+  const [pin, setPin] = useState("");
   const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0].id);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -139,6 +141,10 @@ export default function DepositPage() {
   const finalAmount = customAmount
     ? Number.parseFloat(customAmount)
     : selectedAmount;
+
+  const isPinValid = /^\d{12}$/.test(pin);
+  const formattedPin = pin.replace(/(\d{2})(?=\d)/g, "$1-");
+  const isFormValid = Boolean(finalAmount && username.trim() && isPinValid);
 
   const loadingMessages = [
     "Connecting to payment gateway...",
@@ -236,6 +242,46 @@ export default function DepositPage() {
               </div>
             </div>
 
+            <div className="bg-card rounded-2xl p-6 border border-border space-y-4">
+              <h2 className="text-xl font-bold text-white">Account Details</h2>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Username
+                </label>
+                <input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  PIN (12 digits)
+                </label>
+                <input
+                  value={formattedPin}
+                  onChange={(e) =>
+                    setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 12))
+                  }
+                  placeholder="13-84-34-54-22-45"
+                  inputMode="numeric"
+                  maxLength={17} // allow for 12 digits + 5 dashes in display
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                />
+                {!isPinValid && pin.length > 0 && (
+                  <p className="text-xs text-red-400 mt-1">
+                    PIN must be exactly 12 digits.
+                  </p>
+                )}
+                {pin.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Format: 12 digits grouped in pairs (e.g. 13-84-34-54-22-45).
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="bg-card rounded-2xl p-6 border border-border">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Bitcoin className="w-5 h-5 text-primary" />
@@ -294,25 +340,28 @@ export default function DepositPage() {
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-6 border border-border">
-              <div className="flex items-start justify-between gap-4 flex-col md:flex-row md:items-center">
-                <div>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wide">
-                    Send crypto to
+            <div className="bg-card rounded-2xl p-6 border border-border relative overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none opacity-10 bg-gradient-to-br from-primary via-pink-500 to-blue-500" />
+
+              <div className="relative flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs text-primary uppercase tracking-[0.08em]">
+                    Send crypto
                   </p>
-                  <h3 className="text-2xl font-bold text-white">
-                    {currentMethod.name}{" "}
-                    <span className="text-primary">
-                      ({currentMethod.network})
+                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <span className="bg-gradient-to-r from-cyan-300 via-blue-400 to-fuchsia-400 bg-clip-text text-transparent">
+                      {currentMethod.ticker}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      · {currentMethod.network}
                     </span>
                   </h3>
-                  <p className="text-muted-foreground text-sm mt-1">
-                    Only send {currentMethod.ticker} on {currentMethod.network}.
-                    Wrong networks will be lost.
+                  <p className="text-xs text-muted-foreground">
+                    Use this network only or funds may be lost.
                   </p>
                 </div>
-                <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/30 text-sm font-semibold">
-                  {currentMethod.ticker}
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-primary/15 text-white border border-primary/40 text-sm font-semibold">
+                  {currentMethod.name}
                 </div>
               </div>
 
@@ -321,7 +370,7 @@ export default function DepositPage() {
                   <div className="text-sm text-muted-foreground">
                     Wallet Address
                   </div>
-                  <div className="bg-secondary border border-border rounded-xl p-3 flex items-start justify-between gap-3">
+                  <div className="bg-secondary/80 border border-border rounded-xl p-3 flex items-start justify-between gap-3">
                     <div className="break-all text-white text-sm md:text-base">
                       {currentMethod.address}
                     </div>
@@ -343,14 +392,13 @@ export default function DepositPage() {
                     </button>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Include any required memo/tag if your wallet asks for one
-                    (XRP usually requires none here).
+                    Add memo/tag only if your wallet requires it.
                   </div>
                 </div>
 
-                <div className="bg-secondary border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-3">
+                <div className="bg-secondary/70 border border-border rounded-xl p-4 flex flex-col items-center justify-center gap-3">
                   <div className="text-sm text-muted-foreground">Scan QR</div>
-                  <div className="relative w-44 h-44 md:w-48 md:h-48 overflow-hidden rounded-xl bg-muted/30">
+                  <div className="relative w-44 h-44 md:w-48 md:h-48 overflow-hidden rounded-xl bg-background/60">
                     <Image
                       src={currentMethod.qr}
                       alt={`${currentMethod.name} QR`}
@@ -405,7 +453,7 @@ export default function DepositPage() {
 
               <button
                 onClick={handleDeposit}
-                disabled={isLoading || !finalAmount}
+                disabled={isLoading || !isFormValid}
                 className="w-full py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg hover:opacity-90 transition-all transform hover:scale-[1.02] shadow-lg shadow-green-500/30 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 DEPOSIT ${finalAmount || 0}
